@@ -21,8 +21,11 @@ public class Food implements Serializable {
     private int count;
     private int totalPrice;
     private boolean popular;
+
     @Ignore
     private List<Image> images;
+    @Ignore
+    private List<Feedback> feedBacks;
 
     public long getId() {
         return id;
@@ -117,5 +120,12 @@ public class Food implements Serializable {
 
     public void setImages(List<Image> images) {
         this.images = images;
+    }
+    public List<Feedback> getFeedBacks() {
+        return feedBacks;
+    }
+
+    public void setFeedBacks(List<Feedback> feedBacks) {
+        this.feedBacks = feedBacks;
     }
 }

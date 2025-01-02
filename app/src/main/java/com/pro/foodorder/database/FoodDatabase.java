@@ -8,7 +8,7 @@ import androidx.room.RoomDatabase;
 
 import com.pro.foodorder.model.Food;
 
-@Database(entities = {Food.class}, version = 1)
+@Database(entities = {Food.class}, version = 1, exportSchema = false)
 public abstract class FoodDatabase extends RoomDatabase {
 
     private static final String DATABASE_NAME = "food.db";

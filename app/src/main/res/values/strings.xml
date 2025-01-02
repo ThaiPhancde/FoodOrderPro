@@ -56,6 +56,7 @@
     <string name="feedback_email">Email</string>
     <string name="feedback_phone">Số điện thoại</string>
     <string name="feedback_comment">Bình luận (*)</string>
+    <string name="feedback_food_id">Món ăn (*)</string>
     <string name="send_feedback">Gửi phản hồi</string>
 
     <string name="label_id">Mã đơn hàng:</string>

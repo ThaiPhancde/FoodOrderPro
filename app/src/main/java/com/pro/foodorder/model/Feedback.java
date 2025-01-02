@@ -6,15 +6,17 @@ public class Feedback {
     private String phone;
     private String email;
     private String comment;
+    private long foodId;
 
     public Feedback() {
     }
 
-    public Feedback(String name, String phone, String email, String comment) {
+    public Feedback(String name, String phone, String email, String comment, long foodId) {
         this.name = name;
         this.phone = phone;
         this.email = email;
         this.comment = comment;
+        this.foodId = foodId;
     }
 
     public String getName() {
@@ -47,5 +49,13 @@ public class Feedback {
 
     public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    public long getFoodId() {
+        return foodId;
+    }
+
+    public void setFoodId(long foodId) {
+        this.foodId = foodId;
     }
 }

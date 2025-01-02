@@ -2,10 +2,8 @@ package com.pro.foodorder.adapter;
 
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.pro.foodorder.databinding.ItemFeedbackBinding;
 import com.pro.foodorder.model.Feedback;
 

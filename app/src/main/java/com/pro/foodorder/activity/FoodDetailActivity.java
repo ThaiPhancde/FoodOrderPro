@@ -3,29 +3,47 @@ package com.pro.foodorder.activity;
 import android.annotation.SuppressLint;
 import android.graphics.Paint;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.core.content.ContextCompat;
+import androidx.annotation.NonNull;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 
-import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
+import com.pro.foodorder.ControllerApplication;
 import com.pro.foodorder.R;
-import com.pro.foodorder.adapter.MoreImageAdapter;
+import com.pro.foodorder.adapter.FeedbackAdapter;
 import com.pro.foodorder.constant.Constant;
+import com.pro.foodorder.constant.GlobalFunction;
+import com.pro.foodorder.model.Food;
+import com.pro.foodorder.utils.StringUtil;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.pro.foodorder.adapter.MoreImageAdapter;
 import com.pro.foodorder.database.FoodDatabase;
 import com.pro.foodorder.databinding.ActivityFoodDetailBinding;
 import com.pro.foodorder.event.ReloadListCartEvent;
-import com.pro.foodorder.model.Food;
+import com.pro.foodorder.model.Feedback;
 import com.pro.foodorder.utils.GlideUtils;
+import com.pro.foodorder.viewmodel.FoodDetailViewModel;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.util.List;
-
 public class FoodDetailActivity extends BaseActivity {
-
+    private FoodDetailViewModel foodDetailViewModel;
     private ActivityFoodDetailBinding mActivityFoodDetailBinding;
     private Food mFood;
 
@@ -33,11 +51,17 @@ public class FoodDetailActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mActivityFoodDetailBinding = ActivityFoodDetailBinding.inflate(getLayoutInflater());
+        foodDetailViewModel = new ViewModelProvider(this).get(FoodDetailViewModel.class);
         setContentView(mActivityFoodDetailBinding.getRoot());
 
         getDataIntent();
         initToolbar();
         setDataFoodDetail();
+        foodDetailViewModel.getLiveDataFeedBacks().observeForever(data -> {
+            this.mFood.setFeedBacks(data);
+            displayListFeedBacks();
+        });
+        getListFoodFeedBackFromFirebase(mFood.getId());
         initListener();
     }
 
@@ -86,13 +110,12 @@ public class FoodDetailActivity extends BaseActivity {
         mActivityFoodDetailBinding.tvFoodDescription.setText(mFood.getDescription());
 
         displayListMoreImages();
-
         setStatusButtonAddToCart();
     }
 
     private void displayListMoreImages() {
         if (mFood.getImages() == null || mFood.getImages().isEmpty()) {
-            mActivityFoodDetailBinding.tvMoreImageLabel.setVisibility(View.GONE);
+            mActivityFoodDetailBinding.tvMoreImageLabel.setVisibility(View.INVISIBLE);
             return;
         }
         mActivityFoodDetailBinding.tvMoreImageLabel.setVisibility(View.VISIBLE);
@@ -101,6 +124,20 @@ public class FoodDetailActivity extends BaseActivity {
 
         MoreImageAdapter moreImageAdapter = new MoreImageAdapter(mFood.getImages());
         mActivityFoodDetailBinding.rcvImages.setAdapter(moreImageAdapter);
+    }
+
+    private void displayListFeedBacks() {
+        if (mFood.getFeedBacks() == null || mFood.getFeedBacks().isEmpty()) {
+            mActivityFoodDetailBinding.tvFeedBacks.setVisibility(View.INVISIBLE);
+            return;
+        }
+        mActivityFoodDetailBinding.tvFeedBacks.setVisibility(View.VISIBLE);
+        LinearLayoutManager linearLayout = new LinearLayoutManager(this);
+        linearLayout.setOrientation(LinearLayoutManager.VERTICAL);
+        mActivityFoodDetailBinding.rcvFeedBacks.setLayoutManager(linearLayout);
+
+        FeedbackAdapter feedbackAdapter = new FeedbackAdapter(mFood.getFeedBacks());
+        mActivityFoodDetailBinding.rcvFeedBacks.setAdapter(feedbackAdapter);
     }
 
     private void setStatusButtonAddToCart() {
@@ -194,5 +231,28 @@ public class FoodDetailActivity extends BaseActivity {
         });
 
         bottomSheetDialog.show();
+    }
+
+    private void getListFoodFeedBackFromFirebase(long foodId) {
+        ControllerApplication.get(this).getFeedbackDatabaseReference().addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                List<Feedback> feedBacks = new ArrayList<>();
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    Feedback feedback = dataSnapshot.getValue(Feedback.class);
+                    if (feedback == null || feedback.getFoodId() != foodId) {
+                        continue;
+                    }
+                    Log.e("FeedBack: ", Objects.requireNonNull(dataSnapshot.getValue()).toString());
+                    feedBacks.add(feedback);
+                }
+                foodDetailViewModel.setDataFeedBacks(feedBacks);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                GlobalFunction.showToastMessage(getApplicationContext(), getString(R.string.msg_get_date_error));
+            }
+        });
     }
 }

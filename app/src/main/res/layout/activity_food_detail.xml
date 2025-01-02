@@ -13,7 +13,9 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/toolbar">
+        android:layout_below="@+id/toolbar"
+        android:layout_above="@+id/tv_add_to_cart"
+        >
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -138,22 +140,40 @@
                     android:layout_marginEnd="-10dp"
                     android:nestedScrollingEnabled="false"
                     android:focusable="false"/>
-            </LinearLayout>
 
-            <TextView
-                android:id="@+id/tv_add_to_cart"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/define_dimen_10"
-                android:layout_marginTop="@dimen/define_dimen_10"
-                android:layout_marginEnd="@dimen/define_dimen_10"
-                android:layout_marginBottom="@dimen/define_dimen_20"
-                android:background="@drawable/bg_green_shape_corner_6"
-                android:gravity="center"
-                android:padding="@dimen/define_dimen_12"
-                android:text="@string/add_to_cart"
-                android:textColor="@color/white"
-                android:textSize="@dimen/text_size_normal" />
+                <TextView
+                    android:id="@+id/tv_feed_backs"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="@string/feedback"
+                    android:textStyle="bold"
+                    android:layout_marginTop="@dimen/define_dimen_20"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="@dimen/text_size_small" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rcv_feed_backs"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false"
+                    android:focusable="false"/>
+            </LinearLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
+    <TextView
+        android:layout_alignParentBottom="true"
+        android:id="@+id/tv_add_to_cart"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/define_dimen_10"
+        android:layout_marginTop="@dimen/define_dimen_10"
+        android:layout_marginEnd="@dimen/define_dimen_10"
+        android:layout_marginBottom="@dimen/define_dimen_20"
+        android:background="@drawable/bg_green_shape_corner_6"
+        android:gravity="center"
+        android:padding="@dimen/define_dimen_12"
+        android:text="@string/add_to_cart"
+        android:textColor="@color/white"
+        android:textSize="@dimen/text_size_normal" />
 </RelativeLayout>
